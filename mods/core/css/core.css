@@ -1,0 +1,89 @@
+.core-textarea {
+    position:absolute;;
+    width:100%;
+    height:100%;
+    font-size: 20px;
+    font-family: Menlo;
+    letter-spacing: 0;
+    color: black;
+    left:0px;
+    top:0px;
+    margin:0 0 0 0;
+    background-color: gray;
+    /*opacity:0;*/
+    -moz-user-select: none;
+    white-space: pre-wrap;
+}
+
+.core-textshow {
+    position:absolute;;
+    width:100%;
+    height:100%;
+    font-size: 20px;
+    font-family: Menlo;
+    letter-spacing: 0;
+    color: white;
+    left:0px;
+    top:0px;
+    margin:0 0 0 0;
+    -moz-user-select: none;
+}
+
+.core-cursorlayer {
+    position:absolute;
+    left:0;
+    right:0;
+    width:100%;
+    height:100%;
+    /*background-color: black;*/
+}
+
+.core-cursor {
+    position:absolute;
+    left:0px;
+    top:0em;
+    /*top:5px;*/
+    font-size: 20px;
+    font-family: Menlo;
+    /*width: 9.75px;*/
+    width: 1.1ex;
+    height: 1.2em;
+    background-color: white;
+    -webkit-animation: core-twinkling 0.8s infinite;
+}
+
+.core-line {
+    margin: 0 0 0 0;
+}
+
+.core-body, .core-html {
+    height:100%;
+    margin:0 0 0 0;
+    top:0;
+    left:0;
+}
+.core-pre {
+    top:0;
+    margin:0 0 0 0;
+    font-family: Menlo;
+}
+
+.core-span.system {
+    color: #ffff00;
+}
+
+.core-span.nothing {
+    color: white;
+}
+
+@-webkit-keyframes core-twinkling {
+    0%{
+        opacity:0;
+    }
+    50%{
+        opacity:0.8;
+    }
+    100%{
+        opacity:0;
+    }
+}

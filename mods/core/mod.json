@@ -1,0 +1,12 @@
+{
+  "name":"core",
+  "version":"0.0.1",
+  "javascript":[
+    "./cecho.js"
+  ],
+  "processor":[
+  ],
+  "css":[
+    "./css/core.css"
+  ]
+}

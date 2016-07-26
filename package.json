@@ -1,0 +1,16 @@
+{
+  "name": "cecho",
+  "version": "0.0.1",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+  },
+  "author": "hipc1211@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "express":"*",
+    "log4js":"*",
+    "morgan":"*",
+    "ramda":"*"
+  }
+}
