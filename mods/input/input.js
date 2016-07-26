@@ -50,6 +50,7 @@ var input = {
         cursor.updatePosition();
     },
     inputMove:function (line, pos, end) {
+        console.log('input move',line,pos)
         var startp = input.getSelectionByPos(line,pos);
         coreElement.textarea.get(0).selectionStart = startp;
         coreElement.textarea.get(0).selectionEnd = startp + end;
@@ -95,7 +96,9 @@ var input = {
         for(var ii = 0; ii < line; ii ++){
             sel += lines[ii].length;
         }
-        if(pos > lines[line].length)pos = lines[line].length - 1;
+        console.log('in get selection',line,pos,lines[line].length);
+        if(pos >= lines[line].length)pos = lines[line].length - 1;
+        if(pos < 0)pos = 0;
         sel += pos;
         return sel;
     },
