@@ -1,6 +1,6 @@
 {
   "name":"input",
   "version":"0.0.1",
-  "javascript":["./input.js"],
+  "javascript":["./input.js","./charcommand.js"],
   "css":[]
 }

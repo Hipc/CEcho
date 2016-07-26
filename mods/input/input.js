@@ -18,12 +18,16 @@ var input = {
     onCoreTextshowClick:function () {
     },
     onDocumentKeyUp:function (event) {
-        var handler = input.mod + 'KeyUp';
-        input[handler](event.key);
+        var handler = input.mod + '_keyUp_' + event.key;
+        input.runCharCommand(handler);
     },
     onDocumentKeyDown:function (event) {
-        var handler = input.mod + 'KeyDown';
-        input[handler](event.key);
+        var handler = input.mod + '_keyDown_' + event.key;
+        input.runCharCommand(handler);
+    },
+    runCharCommand:function (handler) {
+        charcommand[handler]();
+        cursor.updatePosition();
     },
     disableInputarea:function () {
         coreElement.textarea.attr('disabled','1');
@@ -34,6 +38,7 @@ var input = {
     mod:'onNormal',
     onNormalKeyDown:function (key) {
         var pos = input.getPosition();
+        var sel = input.getSelectionByPos(pos.line,pos.pos);
         switch(key){
             case 'h':
                 input.inputMove(pos.line,pos.pos-1,0);
@@ -46,45 +51,31 @@ var input = {
                 break;
             case 'j':
                 input.inputMove(pos.line+1,pos.pos,0);
+            case 'e':
+                input.inputMoveBySel(sel + input.wordStep(1).index);
+                break;
+            case 'E':
+                input.inputMoveBySel(sel + input.wordStep(1,' ').index);
+                break;
+            case 'b':
+                input.inputMoveBySel(sel - input.wordStep(-1).index);
+                break;
+            case 'B':
+                input.inputMoveBySel(sel - input.wordStep(-1,' ').index);
+                break;
         }
         cursor.updatePosition();
+    },
+    inputMoveBySel:function (sel,end) {
+        end = end||0;
+        coreElement.textarea.get(0).selectionStart = sel;
+        coreElement.textarea.get(0).selectionEnd = sel + end;
     },
     inputMove:function (line, pos, end) {
         console.log('input move',line,pos)
         var startp = input.getSelectionByPos(line,pos);
         coreElement.textarea.get(0).selectionStart = startp;
         coreElement.textarea.get(0).selectionEnd = startp + end;
-    },
-    onNormalKeyUp:function (key) {
-        var pos = input.getPosition();
-        switch(key){
-            case 'i':
-                input.enableInputarea();
-                coreElement.textarea.focus();
-                input.mod = 'onInsert';
-                cursor.inputMod();
-                break;
-            case 'a':
-                input.enableInputarea();
-                input.inputMove(pos.line, pos.pos + 1, 0);
-                coreElement.textarea.focus();
-                input.mod = 'onInsert';
-                cursor.inputMod();
-                break;
-        }
-        cursor.updatePosition();
-    },
-    onInsertKeyDown:function (key) {
-        switch(key){
-            case 'Escape':
-                input.disableInputarea();
-                coreElement.textarea.blur();
-                input.mod = 'onNormal';
-                cursor.normalMod();
-                break;
-            default:
-                // cursor.updatePosition();
-        }
     },
     getSelectionByPos:function (line, pos) {
         var text = coreElement.textarea.val();
@@ -122,7 +113,30 @@ var input = {
             line:currline,
             pos:startpos - calcu
         }
-    }
+    },
+    wordStep:function (num,specialChar) {
+        specialChar = specialChar || input.wordSeparator;
+        var text = coreElement.textarea.val();
+        var startp = coreElement.textarea.get(0).selectionStart;
+        text = num>0?text.substr(startp + 1):R.reverse(text.substr(0,startp));
+        console.log(text);
+        var count = Math.abs(num);
+        var preindex = -1;
+        var index = 0;
+        while(count > 0){
+            if(specialChar.indexOf(text[index]) >= 0){
+                preindex = index;
+                if(index !== 0)count -= 1;
+            }
+            index += 1;
+            if(index >= text.length) {index +=1;break;}
+        }
+        return {
+            index:index - 1,
+            preindex:preindex
+        }
+    },
+    wordSeparator:"~!@#$%^&*()_+`-=<>,./?;:'\"[]{}\\|\n "
 };
 
 var cursor = {
