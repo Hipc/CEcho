@@ -12,7 +12,14 @@ $(document).ready(function () {
 });
 
 var input = {
+    currpos:0,
+    numCmd:'',
+    updateCurrpos:function () {
+        var pos = input.getPosition();
+        input.currpos = pos.pos;
+    },
     onCoreTextareaInput:function () {
+        input.updateCurrpos();
         cursor.updatePosition();
     },
     onCoreTextshowClick:function () {
@@ -26,8 +33,11 @@ var input = {
         input.runCharCommand(handler);
     },
     runCharCommand:function (handler) {
-        charcommand[handler]();
-        cursor.updatePosition();
+        if(charcommand[handler]) {
+            console.log(input.numCmd);
+            charcommand[handler](parseInt(input.numCmd));
+            cursor.updatePosition();
+        }
     },
     disableInputarea:function () {
         coreElement.textarea.attr('disabled','1');
@@ -36,36 +46,6 @@ var input = {
         coreElement.textarea.attr('disabled',null);
     },
     mod:'onNormal',
-    onNormalKeyDown:function (key) {
-        var pos = input.getPosition();
-        var sel = input.getSelectionByPos(pos.line,pos.pos);
-        switch(key){
-            case 'h':
-                input.inputMove(pos.line,pos.pos-1,0);
-                break;
-            case 'l':
-                input.inputMove(pos.line,pos.pos+1,0);
-                break;
-            case 'k':
-                input.inputMove(pos.line-1,pos.pos,0);
-                break;
-            case 'j':
-                input.inputMove(pos.line+1,pos.pos,0);
-            case 'e':
-                input.inputMoveBySel(sel + input.wordStep(1).index);
-                break;
-            case 'E':
-                input.inputMoveBySel(sel + input.wordStep(1,' ').index);
-                break;
-            case 'b':
-                input.inputMoveBySel(sel - input.wordStep(-1).index);
-                break;
-            case 'B':
-                input.inputMoveBySel(sel - input.wordStep(-1,' ').index);
-                break;
-        }
-        cursor.updatePosition();
-    },
     inputMoveBySel:function (sel,end) {
         end = end||0;
         coreElement.textarea.get(0).selectionStart = sel;
@@ -77,12 +57,30 @@ var input = {
         coreElement.textarea.get(0).selectionStart = startp;
         coreElement.textarea.get(0).selectionEnd = startp + end;
     },
+    inputMovev2:function (startMove,endMove) {
+        startMove = startMove || 0;
+        endMove = endMove || startMove;
+        var currSelStart = coreElement.textarea.get(0).selectionStart;
+        var currSelEnd = coreElement.textarea.get(0).selectionEnd;
+        coreElement.textarea.get(0).selectionStart = currSelStart + startMove;
+        coreElement.textarea.get(0).selectionEnd = currSelEnd + endMove;
+    },
+    inputMoveToSel:function (startSel, endSel) {
+        endSel = endSel || startSel;
+        var currSelStart = coreElement.textarea.get(0).selectionStart;
+        var currSelEnd = coreElement.textarea.get(0).selectionEnd;
+        console.log('in inputmove sel ',currSelStart,currSelEnd,startSel,endSel);
+        input.inputMovev2(startSel - currSelStart, endSel - currSelEnd);
+    },
     getSelectionByPos:function (line, pos) {
+        console.log('in get selection by pos',line,pos);
         var text = coreElement.textarea.val();
         var lines = text.split('\n');
         for(var ii = 0; ii < lines.length; ii++){
             lines[ii] += '\n';
         }
+        if(line >= lines.length) line = lines.length - 1;
+        if(line < 0)line = 0;
         var sel = 0;
         for(var ii = 0; ii < line; ii ++){
             sel += lines[ii].length;
