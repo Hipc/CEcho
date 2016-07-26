@@ -11,12 +11,10 @@ var R = require('ramda');
 
 var loadMod = function () {
     modLoader.loadStaticPath();
-    console.log(R.map(
-        html.script,
-        R.map(function (obj) {
-            return [{name:'src', value:obj.javascript}];
-        },modLoader.loadStaticPath())
-    ),'is log')
+
+    console.log(
+
+    )
 };
 
 var getPage = function () {
@@ -31,12 +29,15 @@ var getPage = function () {
                         html.script(
                             [{name: 'src', value: '/public/javascript/lib/textarea-helper.js'}]
                         ),
+                        html.script(
+                            [{name: 'src', value: '/public/javascript/lib/ramda.js'}]
+                        ),
                         utils.merge(
                             R.map(
                                 html.link,
                                 R.map(function (obj) {
-                                    return [{name:'rel',value:'stylesheet'},{name:'href',value:obj.css}]
-                                },modLoader.loadStaticPath())
+                                    return [{name: 'rel', value: 'stylesheet'}, {name: 'href', value: obj.css}]
+                                }, modLoader.loadStaticPath())
                             )
                         )
                     ),
@@ -46,9 +47,29 @@ var getPage = function () {
                     utils.merge(
                         R.map(
                             html.script,
-                            R.map(function (obj) {
-                                return [{name: 'src', value: obj.javascript}];
-                            }, modLoader.loadStaticPath())
+                            R.map(function (item) {
+                                    return [item];
+                                },
+                                R.flatten(
+                                    R.map(
+                                        function (obj) {
+                                            return R.map(
+                                                function (list) {
+                                                    return {
+                                                        name: 'src',
+                                                        value: list
+                                                    }
+                                                },
+                                                obj.javascript
+                                            )
+                                        },
+                                        modLoader.loadStaticPath()
+                                    )
+                                )
+                            )
+                            // R.map(function (obj) {
+                            //     return [{name: 'src', value: obj.javascript}];
+                            // }, modLoader.loadStaticPath())
                         )
                     ),
                     []
@@ -65,8 +86,8 @@ var setApp = function (appp) {
 };
 
 module.exports = {
-    setApp:setApp,
-    testpage:getPage(),
-    loadMod:loadMod
+    setApp: setApp,
+    testpage: getPage(),
+    loadMod: loadMod
 };
 
