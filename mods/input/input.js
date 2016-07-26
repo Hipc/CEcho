@@ -33,21 +33,29 @@ var input = {
     },
     mod:'onNormal',
     onNormalKeyDown:function (key) {
+        var pos = input.getPosition();
         switch(key){
             case 'h':
-                input.inputMove(-1,0);
-                cursor.updatePosition();
+                input.inputMove(pos.line,pos.pos-1,0);
                 break;
             case 'l':
-                input.inputMove(1,0);
-                cursor.updatePosition();
+                input.inputMove(pos.line,pos.pos+1,0);
+                break;
+            case 'k':
+                input.inputMove(pos.line-1,pos.pos,0);
+                break;
+            case 'j':
+                input.inputMove(pos.line+1,pos.pos,0);
         }
+        cursor.updatePosition();
     },
-    inputMove:function (start,end) {
-        var startp = coreElement.textarea.get(0).selectionStart += start;
+    inputMove:function (line, pos, end) {
+        var startp = input.getSelectionByPos(line,pos);
+        coreElement.textarea.get(0).selectionStart = startp;
         coreElement.textarea.get(0).selectionEnd = startp + end;
     },
     onNormalKeyUp:function (key) {
+        var pos = input.getPosition();
         switch(key){
             case 'i':
                 input.enableInputarea();
@@ -55,7 +63,15 @@ var input = {
                 input.mod = 'onInsert';
                 cursor.inputMod();
                 break;
+            case 'a':
+                input.enableInputarea();
+                input.inputMove(pos.line, pos.pos + 1, 0);
+                coreElement.textarea.focus();
+                input.mod = 'onInsert';
+                cursor.inputMod();
+                break;
         }
+        cursor.updatePosition();
     },
     onInsertKeyDown:function (key) {
         switch(key){
@@ -67,6 +83,41 @@ var input = {
                 break;
             default:
                 // cursor.updatePosition();
+        }
+    },
+    getSelectionByPos:function (line, pos) {
+        var text = coreElement.textarea.val();
+        var lines = text.split('\n');
+        for(var ii = 0; ii < lines.length; ii++){
+            lines[ii] += '\n';
+        }
+        var sel = 0;
+        for(var ii = 0; ii < line; ii ++){
+            sel += lines[ii].length;
+        }
+        if(pos > lines[line].length)pos = lines[line].length - 1;
+        sel += pos;
+        return sel;
+    },
+    getPosition:function () {
+        var text = coreElement.textarea.val();
+        var lines = text.split('\n');
+        for(var ii = 0; ii < lines.length; ii ++){
+            lines[ii] += '\n';
+        }
+        var startpos = coreElement.textarea.get(0).selectionStart;
+        var currline = 0;
+        var calcu = 0;
+        for(var ii = 0; ii < lines.length; ii ++){
+            if(calcu + lines[ii].length > startpos){
+                currline = ii;
+                break;
+            }
+            calcu += lines[ii].length;
+        }
+        return {
+            line:currline,
+            pos:startpos - calcu
         }
     }
 };
