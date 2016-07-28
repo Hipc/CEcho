@@ -61,12 +61,14 @@ var charcommand = {
         num = num || 1;
         var step = input.wordStep(num);
         input.inputMovev2(step.index);
+        input.updateCurrpos();
         input.numCmd = '';
     },
     onNormal_keyDown_b:function (num) {
         num = num || 1;
         var step = input.wordStep(-num);
         input.inputMovev2(-step.index);
+        input.updateCurrpos();
         input.numCmd = '';
     },
     onNormal_keyDown_1:function () {

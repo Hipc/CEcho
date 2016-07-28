@@ -6,8 +6,10 @@ $(document).ready(function () {
     // $("#core-textshow-1").on('click', input.onCoreTextshowClick);
     coreElement = core.getElememt();
     input.disableInputarea();
-    $(document).on('keyup',input.onDocumentKeyUp);
-    $(document).on('keydown',input.onDocumentKeyDown);
+    // $(document).on('keyup',input.onDocumentKeyUp);
+    // $(document).on('keydown',input.onDocumentKeyDown);
+    $(document).keydown(input.onDocumentKeyDown);
+    $(document).keyup(input.onDocumentKeyUp);
     $(coreElement.textarea).bind('input',input.onCoreTextareaInput);
 });
 
@@ -21,15 +23,17 @@ var input = {
     onCoreTextareaInput:function () {
         input.updateCurrpos();
         cursor.updatePosition();
+        console.log('in input');
     },
     onCoreTextshowClick:function () {
     },
     onDocumentKeyUp:function (event) {
-        var handler = input.mod + '_keyUp_' + event.key;
+        // var handler = input.mod + '_keyUp_' + event.key;
+        var handler = input.mod + '_keyUp_' + keymap.getKey(event.keyCode, event.shiftKey);
         input.runCharCommand(handler);
     },
     onDocumentKeyDown:function (event) {
-        var handler = input.mod + '_keyDown_' + event.key;
+        var handler = input.mod + '_keyDown_' + keymap.getKey(event.keyCode, event.shiftKey);
         input.runCharCommand(handler);
     },
     runCharCommand:function (handler) {
@@ -140,6 +144,7 @@ var input = {
 var cursor = {
     updatePosition:function () {
         var pos = coreElement.textarea.textareaHelper('caretPos');
+        console.log(pos);
         coreElement.cursor.css('left',pos.left);
         coreElement.cursor.css('top',pos.top);
     },
@@ -149,4 +154,27 @@ var cursor = {
     normalMod:function () {
         coreElement.cursor.css('width','1.1ex');
     }
+};
+
+var keymap = {
+    getKey:function (keyCode, shifted) {
+        if(keyCode >= 65 && keyCode <=90){
+            if(!shifted) keyCode += 32;
+            return String.fromCharCode(keyCode);
+        }
+        if(keyCode >= 48 && keyCode <= 57 && !shifted){
+            return keyCode - 48;
+        }
+        if(shifted && keymap.shifted[keyCode]) return keymap.shifted[keyCode];
+        return keymap[keyCode];
+    },
+    shifted:{
+        //char key
+        33:'!',
+        34:'"',
+        35:'#',
+    },
+    //command key
+    27:'Escape',
+    32:' ',
 };
