@@ -3,7 +3,7 @@
     /*-webkit-appearance: textarea;*/
     /*border: 1px solid gray;*/
     outline: 0px;
-    font-family: Menlo;
+    /*font-family: Menlo;*/
     height: 100%;
     width:100%;
     overflow: auto;
@@ -11,6 +11,11 @@
     word-break: keep-all;
     white-space: nowrap;
     margin:0 0 0 0;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background-color: black;
+    color: forestgreen;
 }
 
 input {
@@ -18,9 +23,14 @@ input {
     width: 400px;
 }
 
-pre {
-    color: red;
+.cecho-pre {
     margin:0 0 0 0;
     font-family: Menlo;
+    font-size: 20px;
+}
+
+.cecho-div{
+    margin:0 0 0 0;
+    font-family:Menlo;
     font-size: 20px;
 }
