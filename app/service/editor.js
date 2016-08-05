@@ -27,9 +27,6 @@ var getPage = function () {
                             [{name: 'src', value: '/public/javascript/lib/jquery.js'}]
                         ),
                         html.script(
-                            [{name: 'src', value: '/public/javascript/lib/textarea-helper.js'}]
-                        ),
-                        html.script(
                             [{name: 'src', value: '/public/javascript/lib/ramda.js'}]
                         ),
                         utils.merge(

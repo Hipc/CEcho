@@ -1,0 +1,6 @@
+{
+  "name":"javascript",
+  "version":"0.0.1",
+  "javascript":["./index.js"],
+  "css":["./jscss.css"]
+}
