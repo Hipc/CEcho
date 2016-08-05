@@ -1,10 +1,6 @@
 /**
  * Created by HIPC on 16/8/4.
  */
-$(document).ready(function () {
-    // var ceditor = coreEditor({separator:new RegExp('[ ]','g'),syntax:{"javascript-system":["var"]}});
-    // document.getElementsByTagName('body')[0].appendChild(ceditor);
-});
 
 var coreEditor = function(options){
     options = options || {};
@@ -31,10 +27,7 @@ var coreEditor = function(options){
         this.method.setCursor(
             this.memory.savedCursor.line,
             this.memory.savedCursor.pos
-        )
-    });
-    $(ceditor).on('keyup',function () {
-        console.log(this.memory.savedCursor);
+        );
     });
     ceditor.memory = {
         // lines:()=>$(ceditor).find('.cecho-pre').length,
@@ -53,7 +46,7 @@ var coreEditor = function(options){
                 parent:basenode.parentNode,
                 baseNode:basenode,
                 parentPre:parentPre
-            }
+            };
         },
 
         separator:options.separator || new RegExp('[]','g'),
@@ -72,14 +65,14 @@ var coreEditor = function(options){
             var lineText = $(line).text();
             var count = 0;
             var index = 0;
-            // console.log('in setCursor',line,pos);
+            console.log('in setCursor',line,pos);
             while(count < pos && index < 1000){
                 count += $(elements[index]).text().length;
                 index += 1;
             }
             if(index > 0)index -= 1;
             count -= $(elements[index]).text().length;
-            console.log(index,count,elements.get(index))
+            // console.log(index,count,elements.get(index));
 
             range.setEnd(elements.get(index).childNodes[0], pos-count);
             range.setStart(elements.get(index).childNodes[0], pos-count);
@@ -96,9 +89,12 @@ var coreEditor = function(options){
             if(currElement.tagName != 'SPAN') return 0;
             var count = 0;
             for(var ii = 0; ii < currElementIndex; ii ++){
-                count += $(currPre).find('span').get(ii).innerHTML.length;
+                count += $(currPre).find('span:eq(' + ii.toString() + ')').text().length;
             }
+            console.log('in cursorPos',count,'\ncurrElement',currElement,'\ncurrPre',currPre,'\ncurrElemIndex',currElementIndex);
+            console.log('count before add',count);
             count += selection.getRangeAt(0).startOffset;
+            console.log('count',count);
             return count;
         },
     };
@@ -162,15 +158,16 @@ var render = {
                 sp = render.span(spanClass);
                 sp.innerHTML = currText;
             }
-            if(separatorUsed[separatedTextIndex]){
-                sp.innerHTML += separatorUsed[separatedTextIndex];
-            }
             renderedStr += sp.outerHTML;
+            if(separatorUsed[separatedTextIndex]){
+               var separatorSpan = render.span('core-separator');
+               separatorSpan.innerHTML = separatorUsed[separatedTextIndex];
+               renderedStr += separatorSpan.outerHTML;
+            }
         }
         if(renderedStr === '<span class="cecho-span "></span>'){
-            renderedStr = '<span class="cecho-span "><br></span>'
+            renderedStr = '<span class="cecho-span "><br></span>';
         }
         return renderedStr;
     }
 };
-
