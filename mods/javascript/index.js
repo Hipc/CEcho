@@ -23,6 +23,7 @@ var javascriptmod = {
             "package", "private", "protected", "public", "return",
             "short", "static", "super", "switch",
             "synchronized", "this", "throw", "throws", "transient",
-            "true", "try", "typeof", "var", "void", "volatile", "while", "with", "yield"]
+            "true", "try", "typeof", "var", "void", "volatile", "while", "with", "yield"],
+        "javascript-comment":['//']
     }
 };

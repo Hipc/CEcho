@@ -1,3 +1,7 @@
 .javascript-system {
     color: yellow;
 }
+
+.javascript-comment {
+   color: red;
+}

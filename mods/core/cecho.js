@@ -149,14 +149,17 @@ var render = {
             var currText = separatedText[separatedTextIndex];
             var sp = render.span();
             sp.innerHTML = currText;
+            var syntaxFlag = false;
             for (var syntaxName in syntax) {
                 var currSyntax = syntax[syntaxName];
                 var spanClass = '';
                 if (currSyntax.indexOf(currText) >= 0) {
                     spanClass += syntaxName;
+                    syntaxFlag = true;
                 }
                 sp = render.span(spanClass);
                 sp.innerHTML = currText;
+                if(syntaxFlag) break;
             }
             renderedStr += sp.outerHTML;
             if(separatorUsed[separatedTextIndex]){
