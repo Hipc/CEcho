@@ -7,15 +7,29 @@ var coreEditor = function(options){
     var ceditor = document.createElement('div');
     ceditor.setAttribute('class','core-ceditor');
     ceditor.setAttribute('contenteditable','true');
-    $(ceditor).on('focus',function () {
-        if($(this).text().trim() === '' && ($(this).html().length === 0)){
-            render.initEditor(ceditor);
-        }
-    });
-    $(ceditor).on('keydown',function(){
-        if($(this).text().length <= 0 && $(this).find('pre').length <= 1 && event.keyCode === 8){
+    render.initEditor(ceditor);
+    // $(ceditor).on('focus',function () {
+        // if($(this).text().trim() === '' && ($(this).html().length === 0)){
             // render.initEditor(ceditor);
-            // $(ceditor).blur();
+        // }
+    // });
+    $(ceditor).on('keydown',function(event){
+        var currLine = ceditor.memory.currLine();
+        if(($(currLine.parentPre).text().length === 1 || ($(currLine.parentPre).text().length === 0 && $(currLine.parentPre).index() === 0 ))&& event.keyCode === 8){
+            render.initLine(currLine.parentPre);
+            event.preventDefault();
+        }
+        var pressedKey = keyCode[event.keyCode];
+        if(!pressedKey){
+            pressedKey = String.fromCharCode(event.keyCode);
+        }
+        var keyCommand = '';
+        if(event.metaKey) keyCommand += 'Meta_';
+        if(event.ctrlKey) keyCommand += 'Control_';
+        if(event.altKey) keyCommand += 'Alt_';
+        keyCommand += pressedKey;
+        if(keyMap[keyCommand]){
+            keyMap[keyCommand].bind(ceditor)();
             event.preventDefault();
         }
     });
@@ -29,8 +43,17 @@ var coreEditor = function(options){
             this.memory.savedCursor.pos
         );
     });
+    $(ceditor).on('keyup',function(){
+        var currLine = $(ceditor).get(0).memory.currLine();
+        var linetext = $(currLine.parentPre).text();
+        if(linetext === ''){
+            render.initLine(currLine.parentPre);
+        }
+    });
     ceditor.memory = {
-        // lines:()=>$(ceditor).find('.cecho-pre').length,
+        lines:function(){
+            return $(ceditor).find('.cecho-pre').length;
+        },
         mod:'textedit',
         currLine:function () {
             var basenode = window.getSelection().baseNode;
@@ -48,7 +71,6 @@ var coreEditor = function(options){
                 parentPre:parentPre
             };
         },
-
         separator:options.separator || new RegExp('[]','g'),
         syntax:options.syntax || {},
         savedCursor:{line:0,pos:0},
@@ -65,14 +87,12 @@ var coreEditor = function(options){
             var lineText = $(line).text();
             var count = 0;
             var index = 0;
-            console.log('in setCursor',line,pos);
             while(count < pos && index < 1000){
                 count += $(elements[index]).text().length;
                 index += 1;
             }
             if(index > 0)index -= 1;
             count -= $(elements[index]).text().length;
-            // console.log(index,count,elements.get(index));
 
             range.setEnd(elements.get(index).childNodes[0], pos-count);
             range.setStart(elements.get(index).childNodes[0], pos-count);
@@ -91,10 +111,7 @@ var coreEditor = function(options){
             for(var ii = 0; ii < currElementIndex; ii ++){
                 count += $(currPre).find('span:eq(' + ii.toString() + ')').text().length;
             }
-            console.log('in cursorPos',count,'\ncurrElement',currElement,'\ncurrPre',currPre,'\ncurrElemIndex',currElementIndex);
-            console.log('count before add',count);
             count += selection.getRangeAt(0).startOffset;
-            console.log('count',count);
             return count;
         },
     };
@@ -138,6 +155,11 @@ var render = {
         d.appendChild(p);
         p.appendChild(s);
         editor.appendChild(d);
+    },
+    initLine:function(linePre){
+        var s = render.span();
+        linePre.innerHTML = '';
+        linePre.appendChild(s);
     },
     lineText:function(line,separator,syntax) {
         var text = $(line).text();

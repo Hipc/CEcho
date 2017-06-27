@@ -2,7 +2,8 @@
   "name":"core",
   "version":"0.0.1",
   "javascript":[
-    "./cecho.js"
+    "./cecho.js",
+    "./keymap.js"
   ],
   "processor":[
   ],
